@@ -15,5 +15,6 @@ router.register(r'pedido', views.PedidoViewSet)
 router.register(r'pedido_item', views.PedidoItemsViewSet)
 
 urlpatterns = [
-  path('', include(router.urls))
+  path('', include(router.urls)),
+  path('chat', views.ChatApiView.as_view(), name='chat_api'),
 ]	 + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
