@@ -39,3 +39,31 @@ class PedidoSerializer(serializers.ModelSerializer):
     model = models.Pedido
     fields = '__all__'
     read_only_fields = ['codigo', 'data_criacao']
+
+
+# Fluxo Chat
+class ChatFluxoOpcaoSerializer(serializers.ModelSerializer):
+
+  fluxo_destino = serializers.CharField(source='fluxo_destino.etapa_fluxo', read_only=True)
+
+  class Meta:
+    model = models.ChatFluxoOpcao
+    fields = ['id','fluxo_destino','descricao']
+    read_only_fields = ['codigo', 'data_criacao']
+
+
+class ChatFluxoSerializer(serializers.ModelSerializer):
+  opcoes = ChatFluxoOpcaoSerializer(many=True, read_only=True,source='fluxo_opcao')
+  class Meta:
+    model = models.ChatFluxo
+    fields = '__all__'
+    read_only_fields = ['codigo', 'data_criacao']
+    
+
+class ChatMensagemSerializer(serializers.ModelSerializer):
+  autor = UserSerializer(read_only=True)
+  class Meta:
+    model = models.ChatMensagem
+    fields = '__all__'
+    read_only_fields = ['codigo', 'data_criacao']
+

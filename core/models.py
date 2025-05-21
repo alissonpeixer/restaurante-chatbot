@@ -91,3 +91,72 @@ class PedidoItems(models.Model):
     verbose_name = 'Pedido Items'
     verbose_name_plural = 'PedidoItems'
     ordering = ['-data_criacao']
+
+
+
+# Fluxo Chat
+class Chat(models.Model):
+  codigo        = ShortUUIDField(length=7, max_length=9, prefix="ch", alphabet="abcdefg1234", unique=True, editable=False)
+
+  user          = models.ForeignKey('authentication.User', on_delete=models.CASCADE, null=True)
+  etapa_fluxo   = models.ForeignKey('ChatFluxo', on_delete=models.CASCADE, null=True, blank=True, related_name='fluxo')
+  data_criacao  = models.DateTimeField(auto_now_add=True)
+
+  def __str__(self):
+    return f"Chat {self.codigo} - {self.user}"
+
+  class Meta:
+    verbose_name = 'Chat'
+    verbose_name_plural = 'Chats'
+    ordering = ['-data_criacao']
+
+
+
+class ChatMensagem(models.Model):
+  codigo        = ShortUUIDField(length=7, max_length=9, prefix="ms", alphabet="abcdefg1234", unique=True, editable=False)
+
+  chat          = models.ForeignKey(Chat, on_delete=models.CASCADE, related_name='mensagens')
+  autor         = models.ForeignKey('authentication.User', on_delete=models.CASCADE, null=True)
+  mensagem      = models.TextField(blank=True, null=True)
+  data_criacao  = models.DateTimeField(auto_now_add=True)
+
+  def __str__(self):
+    return self.mensagem
+
+  class Meta:
+    verbose_name = 'Chat Mensagem'
+    verbose_name_plural = 'Chat Mensagens'
+    ordering = ['data_criacao']
+
+
+
+class ChatFluxo(models.Model):
+  codigo        = ShortUUIDField(length=7, max_length=9, prefix="fl", alphabet="abcdefg1234", unique=True, editable=False)
+
+  etapa_fluxo   = models.CharField(max_length=100,default='')
+  resposta      = models.TextField(blank=True, null=True)
+  data_criacao  = models.DateTimeField(auto_now_add=True)
+
+  def __str__(self):
+    return self.etapa_fluxo
+  
+  class Meta:
+    verbose_name = 'Chat Fluxo'
+    verbose_name_plural = 'Chat Fluxos'
+    ordering = ['-data_criacao']
+
+class ChatFluxoOpcao(models.Model):
+  codigo        = ShortUUIDField(length=7, max_length=9, prefix="fo", alphabet="abcdefg1234", unique=True, editable=False)
+
+  etapa_fluxo   = models.ForeignKey(ChatFluxo, on_delete=models.CASCADE, related_name='fluxo_opcoes')
+  fluxo_destino = models.ForeignKey(ChatFluxo, on_delete=models.CASCADE, related_name='fluxo_opcao_destino', null=True, blank=True)
+  descricao     = models.TextField(blank=True, null=True)
+  data_criacao  = models.DateTimeField(auto_now_add=True)
+
+  def __str__(self):
+    return f'{self.etapa_fluxo} -> {self.fluxo_destino} = {self.descricao}'
+    
+  class Meta:
+    verbose_name = 'Chat Fluxo Opcao'
+    verbose_name_plural = 'Chat Fluxo Opcoes'
+    ordering = ['-data_criacao']

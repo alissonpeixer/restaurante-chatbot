@@ -10,9 +10,9 @@ from . import views
 
 router = routers.DefaultRouter()
 router.register(r'produto', views.ProdutoViewSet)
-router.register(r'partes_produto', views.PartesProdutoViewSet)
+router.register(r'partes-produto', views.PartesProdutoViewSet)
 router.register(r'pedido', views.PedidoViewSet)
-router.register(r'pedido_item', views.PedidoItemsViewSet)
+router.register(r'pedido-item', views.PedidoItemsViewSet)
 
 urlpatterns = [
   path('', include(router.urls)),

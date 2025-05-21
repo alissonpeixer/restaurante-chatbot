@@ -32,7 +32,6 @@ class PedidoItemsViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
 
-
 #Api
 class ChatApiView(APIView):
     
@@ -44,4 +43,41 @@ class ChatApiView(APIView):
     def post(self, request, format=None):
         data = request.data
         print(data)
-        return Response({'status': 'ok','message': 'API is running'})
+        if 'etapa_fluxo' not in data:
+            return Response({'status': 'ERROR', 'mensagem': 'Etapa fluxo não informada.'})
+
+        try:
+            try:
+
+                fluxo = models.ChatFluxo.objects.filter(etapa_fluxo=data['etapa_fluxo']).first()
+                
+                chat = models.Chat.objects.get(user = request.user)
+                chat.etapa_fluxo = fluxo
+                chat.save()
+
+                if data['mensagem']:
+                    models.ChatMensagem.objects.create(chat=chat, mensagem=data['mensagem'], autor=request.user)
+
+                opcoes = models.ChatFluxoOpcao.objects.filter(etapa_fluxo=fluxo).all()
+                opcoes_serializer = serializers.ChatFluxoOpcaoSerializer(opcoes, many=True).data
+
+                return Response({'status': 'OK', 'mensagem': fluxo.resposta, 'fluxo': fluxo.etapa_fluxo, 'opcoes': opcoes_serializer})
+            except models.Chat.DoesNotExist:
+                fluxo = models.ChatFluxo.objects.filter(etapa_fluxo='PERGUNTA_1').first()
+                
+                opcoes = models.ChatFluxoOpcao.objects.filter(etapa_fluxo=fluxo).all()
+
+                chat = models.Chat.objects.create(user = request.user, etapa_fluxo = fluxo)
+                chat.save()
+
+                
+                if data['mensagem']:
+                    models.ChatMensagem.objects.create(chat=chat, mensagem=data['mensagem'],autor=request.user)
+                    
+                opcoes_serializer = serializers.ChatFluxoOpcaoSerializer(opcoes, many=True).data
+
+                return Response({'status': 'OK', 'mensagem': fluxo.resposta, 'fluxo': fluxo.etapa_fluxo, 'opcoes': opcoes_serializer})
+        except Exception as e:
+            return Response({'status': 'ERROR', 'message': 'An error occurred while processing the request.'}, status=500)
+       
+
