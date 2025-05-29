@@ -11,13 +11,13 @@ class ProdutoViewSet(viewsets.ModelViewSet):
 
     queryset = models.Produto.objects.all().order_by('-data_criacao')
     serializer_class = serializers.ProdutoSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    #permission_classes = [permissions.IsAuthenticated]
 
 class PartesProdutoViewSet(viewsets.ModelViewSet):
 
     queryset = models.PartesProduto.objects.all().order_by('-data_criacao')
     serializer_class = serializers.PartesProdutoSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    #permission_classes = [permissions.IsAuthenticated]
 
 class PedidoViewSet(viewsets.ModelViewSet):
 
