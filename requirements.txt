@@ -19,3 +19,5 @@ dj-rest-auth==7.0.1
 ## The following requirements were added by pip freeze:
 djangorestframework_simplejwt==5.5.0
 PyJWT==2.9.0
+## The following requirements were added by pip freeze:
+django-cors-headers==4.7.0
